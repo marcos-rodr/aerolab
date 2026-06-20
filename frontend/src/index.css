@@ -1,0 +1,187 @@
+@import "tailwindcss";
+
+/* ===== AeroLab Design System ===== */
+
+@theme {
+  --color-aero-bg: var(--aero-bg);
+  --color-aero-surface: var(--aero-surface);
+  --color-aero-card: var(--aero-card);
+  --color-aero-border: var(--aero-border);
+  --color-aero-border-bright: var(--aero-border-bright);
+  --color-aero-blue: #3b82f6;
+  --color-aero-cyan: #06b6d4;
+  --color-aero-red: #ef4444;
+  --color-aero-yellow: #eab308;
+  --color-aero-green: #22c55e;
+  --color-aero-text: var(--aero-text);
+  --color-aero-text-muted: var(--aero-text-muted);
+  --color-aero-text-dim: var(--aero-text-dim);
+  --color-aero-glass: var(--aero-glass);
+  --color-aero-glass-hover: var(--aero-glass-hover);
+  --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Base Light Mode */
+:root {
+  --aero-bg: #f8fafc;
+  --aero-surface: #f1f5f9;
+  --aero-card: #ffffff;
+  --aero-border: rgba(0, 0, 0, 0.1);
+  --aero-border-bright: rgba(0, 0, 0, 0.2);
+  --aero-text: #0f172a;
+  --aero-text-muted: #475569;
+  --aero-text-dim: #94a3b8;
+  --aero-glass: rgba(255, 255, 255, 0.7);
+  --aero-glass-hover: rgba(255, 255, 255, 0.9);
+}
+
+/* Dark Mode */
+.dark {
+  --aero-bg: #0a0f1e;
+  --aero-surface: #111827;
+  --aero-card: #1e293b;
+  --aero-border: rgba(255, 255, 255, 0.1);
+  --aero-border-bright: rgba(255, 255, 255, 0.2);
+  --aero-text: #f1f5f9;
+  --aero-text-muted: #94a3b8;
+  --aero-text-dim: #64748b;
+  --aero-glass: rgba(15, 23, 42, 0.6);
+  --aero-glass-hover: rgba(30, 41, 59, 0.7);
+}
+
+/* ===== Base Styles ===== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  background-color: var(--color-aero-bg);
+  color: var(--color-aero-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Glassmorphism Utility ===== */
+
+.glass {
+  background: var(--color-aero-glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--color-aero-border);
+}
+
+.glass-hover:hover {
+  background: var(--color-aero-glass-hover);
+  border-color: var(--color-aero-border-bright);
+}
+
+/* ===== Custom Scrollbar ===== */
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-aero-border-bright);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-aero-text-dim);
+}
+
+/* ===== Custom Range Slider ===== */
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--color-aero-blue), var(--color-aero-cyan));
+  outline: none;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+input[type="range"]:hover {
+  opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  transition: box-shadow 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.8);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+/* ===== Animations ===== */
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}
+
+.animate-slide-in {
+  animation: slide-in-left 0.3s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ===== Gradient Text ===== */
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--color-aero-blue), var(--color-aero-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
