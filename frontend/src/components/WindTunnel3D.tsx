@@ -118,6 +118,7 @@ function AeroObject({
       emissiveIntensity={0.3}
       metalness={0.6}
       roughness={0.25}
+      side={THREE.DoubleSide}
     />
   )
 
@@ -131,7 +132,7 @@ function AeroObject({
         <mesh ref={meshRef} scale={size} castShadow receiveShadow>
           {objectType === 'sphere' && <sphereGeometry args={[0.5, 32, 32]} />}
           {objectType === 'cylinder' && <cylinderGeometry args={[0.3, 0.3, 2, 32]} />}
-          {(objectType === 'airfoil' || objectType === 'naca0012') && <AirfoilGeometry size={1} />}
+          {objectType === 'naca0012' && <AirfoilGeometry size={1} />}
           {material}
         </mesh>
       )}

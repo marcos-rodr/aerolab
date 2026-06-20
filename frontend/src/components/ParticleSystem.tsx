@@ -122,6 +122,30 @@ export default function ParticleSystem({
     return cone
   }, [])
 
+  // Geometrias das linhas pré-calculadas e cacheadas
+  const lineGeometries = useMemo(() => {
+    return fallbackStreamlines.map((streamline) => {
+      if (!streamline) return null
+      const line = streamline.path || []
+      if (line.length < 2) return null
+      const points = line.map((p) => new THREE.Vector3(p.x || 0, p.y || 0, p.z || 0))
+      const colors = line.map((p) => {
+        const velNorm = Math.min(1, (p.speed || 0) / (maxVelocity || 50))
+        return velocityToColor(velNorm)
+      })
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(points)
+      const colorArray = new Float32Array(colors.length * 3)
+      colors.forEach((c, j) => {
+        colorArray[j * 3] = c.r
+        colorArray[j * 3 + 1] = c.g
+        colorArray[j * 3 + 2] = c.b
+      })
+      geometry.setAttribute('color', new THREE.Float32BufferAttribute(colorArray, 3))
+      return geometry
+    })
+  }, [fallbackStreamlines, maxVelocity])
+
   // Anima posição + orientação das mini-setas
   useFrame(() => {
     if (!instancedRef.current || !progressRef.current || !speedsRef.current) return
@@ -192,36 +216,27 @@ export default function ParticleSystem({
     }
   })
 
+  // Prepara as cores iniciais das instâncias (branco puro)
+  const initialColors = useMemo(() => {
+    return new Float32Array(count * 3).fill(1)
+  }, [count])
+
   return (
     <group>
       {/* Linhas das streamlines */}
-      {fallbackStreamlines.map((streamline, i) => {
-        if (!streamline) return null
-        const line = streamline.path || []
-        if (line.length < 2) return null
-        const points = line.map((p) => new THREE.Vector3(p.x || 0, p.y || 0, p.z || 0))
-        const colors = line.map((p) => {
-          const prefColor = arrowPropsRef.current.color
-          if (prefColor && prefColor !== 'velocity') {
-            return new THREE.Color(prefColor)
-          }
-          const velNorm = Math.min(1, (p.speed || 0) / (maxVelocity || 50))
-          return velocityToColor(velNorm)
-        })
-
-        const geometry = new THREE.BufferGeometry().setFromPoints(points)
-        const colorArray = new Float32Array(colors.length * 3)
-        colors.forEach((c, j) => {
-          colorArray[j * 3] = c.r
-          colorArray[j * 3 + 1] = c.g
-          colorArray[j * 3 + 2] = c.b
-        })
-        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colorArray, 3))
-
+      {lineGeometries.map((geometry, i) => {
+        if (!geometry) return null
         return (
           <line key={i}>
             <primitive object={geometry} attach="geometry" />
-            <lineBasicMaterial vertexColors transparent opacity={0.2} linewidth={1} />
+            <lineBasicMaterial 
+              key={arrowColor === 'velocity' ? 'line-vertex' : 'line-solid'}
+              vertexColors={arrowColor === 'velocity'} 
+              color={arrowColor === 'velocity' ? '#ffffff' : arrowColor}
+              transparent 
+              opacity={0.2} 
+              linewidth={1} 
+            />
           </line>
         )
       })}
@@ -232,7 +247,16 @@ export default function ParticleSystem({
         args={[arrowGeo, undefined, count]}
         frustumCulled={false}
       >
-        <meshBasicMaterial vertexColors transparent opacity={0.95} />
+        <instancedBufferAttribute
+          attach="instanceColor"
+          args={[initialColors, 3]}
+        />
+        <meshBasicMaterial 
+          vertexColors={false} 
+          color="#ffffff"
+          transparent 
+          opacity={0.95} 
+        />
       </instancedMesh>
     </group>
   )

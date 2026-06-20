@@ -125,6 +125,18 @@ def _generate_naca_3d(size: float) -> dict:
             faces.append([base + off + i, base + off + i + 1, next_base + off + i])
             faces.append([base + off + i + 1, next_base + off + i + 1, next_base + off + i])
     
+    # Fechar tampas laterais (end caps)
+    # Tampa esquerda (s = 0)
+    for i in range(n_chord - 1):
+        faces.append([i, n_chord + i, i + 1])
+        faces.append([i + 1, n_chord + i, n_chord + i + 1])
+        
+    # Tampa direita (s = n_span - 1)
+    base_last = (n_span - 1) * verts_per_section
+    for i in range(n_chord - 1):
+        faces.append([base_last + i, base_last + i + 1, base_last + n_chord + i])
+        faces.append([base_last + i + 1, base_last + n_chord + i + 1, base_last + n_chord + i])
+    
     return {
         "type": "naca0012",
         "vertices": vertices,
@@ -197,6 +209,16 @@ def _generate_cylinder(size: float) -> dict:
             p4 = (i + 1) * n_circ + (j + 1) % n_circ
             faces.append([p1, p2, p3])
             faces.append([p2, p4, p3])
+    
+    # Fechar tampas do cilindro (end caps)
+    # Tampa esquerda (z_min, s = 0)
+    for j in range(1, n_circ - 1):
+        faces.append([0, j + 1, j])
+        
+    # Tampa direita (z_max, s = n_length)
+    base = n_length * n_circ
+    for j in range(1, n_circ - 1):
+        faces.append([base, base + j, base + j + 1])
     
     return {
         "type": "cylinder",
